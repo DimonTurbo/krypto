@@ -95,26 +95,6 @@
             color: #8bb9e1;
         }
         
-        .selected-pair {
-            text-align: center;
-            margin: 20px 0 40px;
-            padding: 15px;
-            background-color: #1e3a5c;
-            border-radius: 10px;
-            border-left: 5px solid #4dabf7;
-        }
-        
-        .selected-pair h3 {
-            color: #8bb9e1;
-            margin-bottom: 10px;
-        }
-        
-        .selected-code {
-            font-size: 2rem;
-            color: #ffffff;
-            font-weight: bold;
-        }
-        
         .info-box {
             background-color: #1a3650;
             padding: 20px;
@@ -162,7 +142,6 @@
 </head>
 <body>
     <div class="container">
-        
         <div class="currency-pairs" id="currencyPairs">
             <!-- Валютные пары будут добавлены через JavaScript -->
         </div>
@@ -199,7 +178,6 @@
         
         // DOM элементы
         const currencyPairsContainer = document.getElementById('currencyPairs');
-        const selectedPairElement = document.getElementById('selectedPair');
         
         // Функция для создания карточек валютных пар
         function createCurrencyPairCards() {
@@ -221,12 +199,9 @@
             });
         }
         
-        // Функция выбора валютной пары
+        // Функция выбора валютной пары (только для визуального выделения)
         function selectCurrencyPair(pair) {
             selectedPair = pair;
-            
-            // Обновляем отображение выбранной пары
-            selectedPairElement.textContent = pair.code;
             
             // Удаляем класс active у всех карточек
             document.querySelectorAll('.pair-card').forEach(card => {

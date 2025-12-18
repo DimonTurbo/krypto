@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор валютной пары - TradingView</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0e1e29;
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #13293d;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #1e3a5c;
+        }
+        
+        h1 {
+            color: #4dabf7;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #8bb9e1;
+            font-size: 1.2rem;
+        }
+        
+        .currency-pairs {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .pair-card {
+            background: linear-gradient(145deg, #1a3650, #15283d);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 120px;
+        }
+        
+        .pair-card:hover {
+            transform: translateY(-5px);
+            border-color: #4dabf7;
+            box-shadow: 0 5px 15px rgba(77, 171, 247, 0.2);
+        }
+        
+        .pair-card.active {
+            border-color: #4dabf7;
+            background: linear-gradient(145deg, #2a4a6a, #1a3650);
+            box-shadow: 0 5px 15px rgba(77, 171, 247, 0.4);
+        }
+        
+        .pair-code {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .pair-name {
+            font-size: 0.9rem;
+            color: #8bb9e1;
+        }
+        
+        .selected-pair {
+            text-align: center;
+            margin: 20px 0 40px;
+            padding: 15px;
+            background-color: #1e3a5c;
+            border-radius: 10px;
+            border-left: 5px solid #4dabf7;
+        }
+        
+        .selected-pair h3 {
+            color: #8bb9e1;
+            margin-bottom: 10px;
+        }
+        
+        .selected-code {
+            font-size: 2rem;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        
+        .info-box {
+            background-color: #1a3650;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border-left: 5px solid #ff6b6b;
+        }
+        
+        .info-box h3 {
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+        
+        .info-box p {
+            margin-bottom: 15px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #5d7a96;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .currency-pairs {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .currency-pairs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="currency-pairs" id="currencyPairs">
+            <!-- Валютные пары будут добавлены через JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Массив доступных валютных пар
+        const currencyPairs = [
+            { code: "CAD/JPY", name: "Канадский доллар/Японская иена" },
+            { code: "CHF/JPY", name: "Швейцарский франк/Японская иена" },
+            { code: "EUR/AUD", name: "Евро/Австралийский доллар" },
+            { code: "GBP/JPY", name: "Британский фунт/Японская иена" },
+            { code: "AUD/USD", name: "Австралийский доллар/Доллар США" },
+            { code: "USD/JPY", name: "Доллар США/Японская иена" },
+            { code: "AUD/JPY", name: "Австралийский доллар/Японская иена" },
+            { code: "GBP/AUD", name: "Британский фунт/Австралийский доллар" },
+            { code: "GBP/CAD", name: "Британский фунт/Канадский доллар" },
+            { code: "EUR/CAD", name: "Евро/Канадский доллар" },
+            { code: "EUR/USD", name: "Евро/Доллар США" },
+            { code: "GBP/USD", name: "Британский фунт/Доллар США" },
+            { code: "USD/CHF", name: "Доллар США/Швейцарский франк" },
+            { code: "AUD/CAD", name: "Австралийский доллар/Канадский доллар" },
+            { code: "CAD/CHF", name: "Канадский доллар/Швейцарский франк" },
+            { code: "EUR/GBP", name: "Евро/Британский фунт" },
+            { code: "GBP/CHF", name: "Британский фунт/Швейцарский франк" },
+            { code: "EUR/CHF", name: "Евро/Швейцарский франк" },
+            { code: "AUD/CHF", name: "Австралийский доллар/Швейцарский франк" },
+            { code: "EUR/JPY", name: "Евро/Японская иена" },
+            { code: "USD/CAD", name: "Доллар США/Канадский доллар" }
+        ];
+        
+        // Текущая выбранная пара
+        let selectedPair = null;
+        
+        // DOM элементы
+        const currencyPairsContainer = document.getElementById('currencyPairs');
+        const selectedPairElement = document.getElementById('selectedPair');
+        
+        // Функция для создания карточек валютных пар
+        function createCurrencyPairCards() {
+            currencyPairs.forEach(pair => {
+                const pairCard = document.createElement('div');
+                pairCard.className = 'pair-card';
+                pairCard.innerHTML = `
+                    <div class="pair-code">${pair.code}</div>
+                    <div class="pair-name">${pair.name}</div>
+                `;
+                
+                // Добавляем обработчик клика
+                pairCard.addEventListener('click', () => {
+                    selectCurrencyPair(pair);
+                    openTradingView(pair);
+                });
+                
+                currencyPairsContainer.appendChild(pairCard);
+            });
+        }
+        
+        // Функция выбора валютной пары
+        function selectCurrencyPair(pair) {
+            selectedPair = pair;
+            
+            // Обновляем отображение выбранной пары
+            selectedPairElement.textContent = pair.code;
+            
+            // Удаляем класс active у всех карточек
+            document.querySelectorAll('.pair-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Добавляем класс active к выбранной карточке
+            const selectedCard = Array.from(document.querySelectorAll('.pair-card')).find(card => {
+                return card.querySelector('.pair-code').textContent === pair.code;
+            });
+            
+            if (selectedCard) {
+                selectedCard.classList.add('active');
+            }
+        }
+        
+        // Функция для открытия ссылки на TradingView
+        function openTradingView(pair) {
+            if (!pair) return;
+            
+            // Формируем ссылку на TradingView для выбранной валютной пары
+            const pairCode = pair.code.replace('/', '');
+            const tradingViewUrl = `https://ru.tradingview.com/symbols/${pairCode}/technicals/?exchange=OANDA`;
+            
+            // Открываем ссылку в новой вкладке
+            window.open(tradingViewUrl, '_blank');
+        }
+        
+        // Инициализация страницы
+        createCurrencyPairCards();
+        
+        // Выбираем валютную пару по умолчанию (AUD/CAD)
+        const defaultPair = currencyPairs.find(pair => pair.code === "AUD/CAD");
+        if (defaultPair) {
+            selectCurrencyPair(defaultPair);
+        }
+    </script>
+</body>
+</html>
